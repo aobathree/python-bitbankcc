@@ -72,6 +72,7 @@ default_config = {
     'end_point':'https://api.bitbank.cc/v1',
     'auth_method': 'request_time',
     'time_window': 5000,
+    'timeout': 30,
 }
 
 class bitbankcc_private(object):
@@ -83,6 +84,8 @@ class bitbankcc_private(object):
         self.api_secret = api_secret
         self.auth_method = config['auth_method'] if 'auth_method' in config else 'request_time'
         self.time_window = config['time_window'] if 'time_window' in config else 5000
+        # None を指定するとタイムアウトなし（従来の挙動）
+        self.timeout = config['timeout'] if 'timeout' in config else 30
 
     def _get_query(self, path, query):
         if len(query) > 0 and '?' not in path :
@@ -93,7 +96,7 @@ class bitbankcc_private(object):
             if self.auth_method == 'request_time' \
             else make_nonce_header(data, self.api_key, self.api_secret)
         uri = self.end_point + path + urlencode(query)
-        with contextlib.closing(requests.get(uri, headers=headers)) as response:
+        with contextlib.closing(requests.get(uri, headers=headers, timeout=self.timeout)) as response:
             response.raise_for_status()
             return error_parser(try_json_parse(response, logger))
 
@@ -104,7 +107,7 @@ class bitbankcc_private(object):
             if self.auth_method == 'request_time' \
             else make_nonce_header(data, self.api_key, self.api_secret)
         uri = self.end_point + path
-        with contextlib.closing(requests.post(uri, data=data, headers=headers)) as response:
+        with contextlib.closing(requests.post(uri, data=data, headers=headers, timeout=self.timeout)) as response:
             response.raise_for_status()
             return error_parser(try_json_parse(response, logger))
 

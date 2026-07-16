@@ -90,6 +90,7 @@ API_SECRET = os.environ['BITBANK_API_SECRET']
 config = {
     'auth_method': 'request_time',
     'time_window': 5000,
+    'timeout': 30, # リクエストタイムアウト秒数（省略時 30、None でタイムアウトなし）
 }
 prv = python_bitbankcc.private(API_KEY, API_SECRET, config=config)
 
