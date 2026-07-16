@@ -76,8 +76,11 @@ default_config = {
 
 class bitbankcc_private(object):
 
-    def __init__(self, api_key, api_secret, end_point='https://api.bitbank.cc/v1', config=default_config):
-        self.end_point = config['end_point'] if 'end_point' in config else 'https://api.bitbank.cc/v1'
+    def __init__(self, api_key, api_secret, end_point='https://api.bitbank.cc/v1', config=None):
+        if config is None:
+            config = {}
+        # config に 'end_point' があればそちらを優先し、なければ end_point 引数を使う
+        self.end_point = config['end_point'] if 'end_point' in config else end_point
         self.path_stub = get_path_from_end_point(self.end_point)
         self.api_key = api_key
         self.api_secret = api_secret
