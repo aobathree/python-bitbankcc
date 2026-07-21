@@ -34,11 +34,13 @@ logger = getLogger(__name__)
 
 class bitbankcc_public(object):
 
-    def __init__(self, end_point='https://public.bitbank.cc'):
+    def __init__(self, end_point='https://public.bitbank.cc', timeout=30):
         self.end_point = end_point
+        # None を指定するとタイムアウトなし（従来の挙動）
+        self.timeout = timeout
 
     def _query(self, query_url):
-        with contextlib.closing(requests.get(query_url)) as response:
+        with contextlib.closing(requests.get(query_url, timeout=self.timeout)) as response:
             response.raise_for_status()
             return error_parser(try_json_parse(response, logger))
 
