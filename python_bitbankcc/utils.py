@@ -32,7 +32,7 @@ class BitbankClientError(Exception):
 def try_json_parse(response, logger):
     try:
         return response.json()
-    except:
+    except ValueError:
         logger.debug('Invalid JSON: ' + repr(response.content))
         raise BitbankClientError('不正なJSONデータがサーバーから返ってきました。お問い合わせください')
 
